@@ -1,0 +1,25 @@
+---分页查询---
+declare @PageSize int;---页大小---
+declare @PageIndex int; ---页码---
+declare @StrSearch nvarchar(100) ---模糊查询---
+set  @PageIndex=1;set @PageSize=10;set @StrSearch='00001'
+SELECT  * FROM (
+	SELECT ROW_NUMBER() OVER (ORDER BY intNo) AS RowNumber,* FROM aTs_pSupport001 where ChrSupplierID like '%'+@StrSearch+'%'
+) as ResultTable
+	WHERE RowNumber > @PageSize*(@PageIndex-1) and RowNumber<=@PageSize*@PageIndex
+---分页查询---
+declare @RowCount int ;
+set @RowCount=(select count(1) from aTs_pSupport001);
+if @RowCount>0
+	begin
+		print '@RowCount>0; The RowsCount is '+convert(nvarchar(100),@RowCount);
+		return;
+	end
+else
+	begin
+	print '@RowCount<=0; The RowsCount is '+ cast(@RowCount as nvarchar(100));
+	end
+
+
+192.168.1.14::8001
+ftp://192.168.1.14:2121/

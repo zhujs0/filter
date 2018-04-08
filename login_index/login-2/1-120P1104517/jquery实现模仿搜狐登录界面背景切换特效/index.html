@@ -1,0 +1,46 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>		
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta equiv="X-UA-Compatible" content="IE=EmulateIE7" />
+<title>jquery实现模仿搜狐登录界面背景切换特效</title>
+<script type="text/javascript" src="js/index.js" ></script>
+<script type="text/javascript" src="js/jquery-1.4.2.min.js" ></script>
+<script type="text/javascript" src="js/index2.js" ></script>
+<link href="css/lanrenzhijia.css" rel="stylesheet" type="text/css">
+    <script type="text/javascript">
+    var nojump=false; 
+    var activated='';
+	var subjects=[
+		'images/img01.jpg',
+		'images/img02.jpg',
+		'images/img03.jpg',
+	];
+	</script>
+</head>
+<body>
+<div id="wrapper" class="page-wrapper">	
+	<div class="login-position-wrapper">
+		<div class="login-content">
+			<div class="login-face-wrapper">
+				<div class="login-face-img">
+					<img src="images/nobody.v.110708.gif" />				
+				</div>
+				<h2 class="login-face-user"></h2>
+			</div>
+			<div class="login-form-wrapper"  id="passportcard"></div>
+			<div class="login-reg">
+				<a href="#" class="login-reg-btn">立即注册</a>			
+			</div>
+		</div>
+ 		<div class="login-background-wrapper" style="background:url(images/img04.jpg);"></div>
+        <div class="login-content-wrapper">
+            <div class="login-bg-select">
+              <a href="javascript:void(0)" class="prev">上一页</a>
+              <a href="javascript:void(0)" class="next">下一页</a>            
+			 </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

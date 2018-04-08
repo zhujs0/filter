@@ -1,0 +1,34 @@
+DbContextOptions options = new DbContextOptionsBuilder().UseSqlServer(connectionString).Options;
+            dbcontext = new myContext(options);
+
+
+
+
+ public class myContext : DbContext
+    {
+       public myContext(DbContextOptions option):base(option)
+        {
+
+        }
+       public DbSet<QualityCode> QualityCodes { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+          
+        }
+    }
+
+
+  //Person person = new Person();
+            //person.Name = "zhao2";
+            //person.Sex = "dd";
+            //Person person1 = new Person();
+            //person1.Name = "zhao3";
+            //person1.Sex = "dd";
+            //dbcontext.Persons.Add(person);
+            //dbcontext.Persons.Add(person1);
+            //dbcontext.SaveChanges();
+            var vv = dbcontext.Persons.Where(t => t.Name == "zhao2").FirstOrDefault();
+            vv.Sex = "123456";
+            dbcontext.SaveChanges();

@@ -1,0 +1,8 @@
+  public string HttpGet(string urls)
+        {
+            HttpClient httpClient = new HttpClient();
+            Task<byte[]> Request = httpClient.GetByteArrayAsync(urls);
+            Request.Wait();
+            var Response = Encoding.UTF8.GetString(Request.Result);
+            return Response;
+        }

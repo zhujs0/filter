@@ -1,0 +1,57 @@
+ public string Post(string Data)
+        {
+            
+            HttpWebRequest req = WebRequest.CreateHttp(new Uri(_Urls));
+            req.ContentType = "application/x-www-form-urlencoded;charset=utf-8";
+            req.Method = "POST";
+            req.ContinueTimeout = 60000;
+            byte[] postData = Encoding.UTF8.GetBytes(Data);
+            Stream reqStream = req.GetRequestStreamAsync().Result;
+            reqStream.Write(postData, 0, postData.Length);
+            reqStream.Dispose();
+            var rsp = (HttpWebResponse)req.GetResponseAsync().Result;
+            Stream stream = rsp.GetResponseStream();
+            StreamReader reader = new StreamReader(stream, Encoding.UTF8);
+            string result= reader.ReadToEnd();
+            stream.Dispose();
+            reader.Dispose();
+            rsp.Dispose();
+            return result;
+        }
+
+
+
+//上传文件
+
+            WebClient webClient = new WebClient();
+            webClient.Credentials = CredentialCache.DefaultCredentials;
+            byte[] responseArray = webClient.UploadFile(postUrl, "POST", filePath);
+            string result = Encoding.Default.GetString(responseArray, 0, responseArray.Length);
+
+//
+
+
+   public string Post()
+        {
+            string token = GetAccess_Token();
+            string postDataStr = "{\"button\":[{\"name\":\"菜单\",\"sub_button\":[{\"type\":\"click\",\"name\":\"我的考勤\","
+                   + "\"url\":\"http://192.168.1.33:8000/api/values\"},{\"type\":\"click\",\"name\":\"订单查询\",\"key\":\"V1001_GOOD\""
+                   + "}]},{\"type\":\"view\",\"name\":\"企业主页\"}]}";
+
+            WebRequest request = WebRequest.Create("https://qyapi.weixin.qq.com/cgi-bin/menu/create?access_token="+ token + "&agentid=1000002");
+            request.Method = "POST";
+            request.ContentType = "application/x-www-form-urlencoded";
+            Byte[] bytes =Encoding.UTF8.GetBytes(postDataStr);
+            request.ContentLength = bytes.Length;
+            Stream myRequestStream = request.GetRequestStream();
+            //StreamWriter myStreamWriter = new StreamWriter(myRequestStream, Encoding.GetEncoding("gb2312"));
+            myRequestStream.Write(bytes,0,bytes.Length);
+            myRequestStream.Close();
+            //myStreamWriter.Close();
+            
+            WebResponse response = request.GetResponse();
+            Stream stream = response.GetResponseStream();
+            StreamReader reader = new StreamReader(stream, Encoding.Default);
+            string str = reader.ReadToEnd();
+            return "";
+        }

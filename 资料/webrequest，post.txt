@@ -1,0 +1,106 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using System.Net;
+using System.IO;
+using Newtonsoft.Json.Linq;
+using System.Text;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
+
+namespace MyWxTest.Controllers
+{
+    [Produces("application/json")]
+    [Route("api/Access_Token")]
+    public class Access_TokenController : Controller
+    {
+        public static AccessToken Access_Token;
+        private string _corpid = "ww2d764427c29d406f";
+        private string _corpsecret = "gvDFFBhhDad79qZ5yxAjUlf1ac1OY4GhMwEngtg0u_Q";
+        private string _GetTokenUrl = "https://qyapi.weixin.qq.com/cgi-bin/gettoken";
+        [HttpGet]
+        public string GetAccess_Token()
+        {
+            if(Access_Token ==null)
+            {
+                Access_Token = new AccessToken();
+                string url = _GetTokenUrl + "?corpid=" + _corpid + "&corpsecret=" + _corpsecret;
+                WebRequest wRequest = WebRequest.Create(url);
+                wRequest.Method = "GET";
+                wRequest.ContentType = "text/html;charset=UTF-8";
+                WebResponse wResponse = wRequest.GetResponse();
+                Stream stream = wResponse.GetResponseStream();
+                StreamReader reader = new StreamReader(stream, System.Text.Encoding.Default);
+                string str = reader.ReadToEnd();   //url返回的值  
+                JObject Robj = JObject.Parse(str);
+                if (Robj["errcode"].ToString() == "0")
+                {
+                    Access_Token.Access_Token = Robj["access_token"].ToString();
+                    Access_Token.GetTime = DateTime.Now.ToString();
+                }
+                reader.Close();
+                wResponse.Close();
+            }
+            else
+            {
+                DateTime dateTime = Convert.ToDateTime(Access_Token.GetTime);
+                TimeSpan ts = DateTime.Now.Subtract(dateTime);
+                double value = ts.TotalSeconds;
+                if(value>7200)
+                {
+                    Access_Token = new AccessToken();
+                    string url = _GetTokenUrl + "?corpid=" + _corpid + "&corpsecret=" + _corpsecret;
+                    WebRequest wRequest = WebRequest.Create(url);
+                    wRequest.Method = "GET";
+                    wRequest.ContentType = "text/html;charset=UTF-8";
+                    WebResponse wResponse = wRequest.GetResponse();
+                    Stream stream = wResponse.GetResponseStream();
+                    StreamReader reader = new StreamReader(stream, System.Text.Encoding.Default);
+                    string str = reader.ReadToEnd();   //url返回的值  
+                    JObject Robj = JObject.Parse(str);
+                    if (Robj["errcode"].ToString() == "0")
+                    {
+                        Access_Token.Access_Token = Robj["access_token"].ToString();
+                        Access_Token.GetTime = DateTime.Now.ToString();
+                    }
+                    reader.Close();
+                    wResponse.Close();
+                }
+            }
+            return Access_Token.Access_Token;
+        }
+        [HttpPut]
+        public string Post()
+        {
+            string token = GetAccess_Token();
+            string postDataStr = "{\"button\":[{\"name\":\"菜单\",\"sub_button\":[{\"type\":\"click\",\"name\":\"我的考勤\","
+                   + "\"url\":\"http://192.168.1.33:8000/api/values\"},{\"type\":\"click\",\"name\":\"订单查询\",\"key\":\"V1001_GOOD\""
+                   + "}]},{\"type\":\"view\",\"name\":\"企业主页\"}]}";
+
+            WebRequest request = WebRequest.Create("https://qyapi.weixin.qq.com/cgi-bin/menu/create?access_token="+ token + "&agentid=1000002");
+            request.Method = "POST";
+            request.ContentType = "application/x-www-form-urlencoded";
+            Byte[] bytes =Encoding.UTF8.GetBytes(postDataStr);
+            request.ContentLength = bytes.Length;
+            Stream myRequestStream = request.GetRequestStream();
+            //StreamWriter myStreamWriter = new StreamWriter(myRequestStream, Encoding.GetEncoding("gb2312"));
+            myRequestStream.Write(bytes,0,bytes.Length);
+            myRequestStream.Close();
+            //myStreamWriter.Close();
+            
+            WebResponse response = request.GetResponse();
+            Stream stream = response.GetResponseStream();
+            StreamReader reader = new StreamReader(stream, Encoding.Default);
+            string str = reader.ReadToEnd();
+            return "";
+        }
+    }
+
+    public class AccessToken
+    {
+        public string Access_Token { get; set; }
+        public string GetTime { get; set; }
+    }
+}
